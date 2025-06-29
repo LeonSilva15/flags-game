@@ -1,0 +1,4 @@
+{
+    "recommendations": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode", "hb432.prettier-eslint-typescript",
+                        "bradlc.vscode-tailwindcss", "vitest.explorer", "deinsoftware.vitest-snippets"]
+}
