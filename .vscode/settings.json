@@ -1,0 +1,24 @@
+{
+    // show squiggles immediately
+    "eslint.validate": [
+        "javascript",
+        "javascriptreact",
+        "typescript",
+        "typescriptreact",
+        "json",
+        "yaml"
+    ],
+
+    // underline even when the file isn't saved
+    "eslint.run": "onType",
+
+    // 1-click or auto-fix on save
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": "explicit",
+        "source.organizeImports": "explicit"
+    }
+
+    // enable formatting (if you still want Prettier extension to format)
+    // "editor.defaultFormatter": "esbenp.prettier-vscode",
+    // "editor.formatOnSave": false,
+}
