@@ -46,7 +46,7 @@ export function Game() {
         if (answer === current.name) {
             setScore((s) => s + 1);
         }
-        if (qIndex + 1 < 5) {
+        if (qIndex + 1 < TOTAL_QUESTIONS) {
             // questionList.length) {
             setQIndex((i) => i + 1);
         } else {
