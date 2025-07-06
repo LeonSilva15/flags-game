@@ -2,6 +2,11 @@
     cursor: pointer;
 }
 
+.option--disabled {
+    background-color: rgb(130, 0, 0);
+    color: white;
+}
+
 @media only screen and (min-width: 600px) {
     .options-list {
         width: 50%;
