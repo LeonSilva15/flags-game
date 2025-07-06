@@ -1,6 +1,10 @@
+import { Button, Grid, Text, Title } from '@mantine/core';
 import { useCallback, useEffect, useState } from 'react';
-import { FlagDisplay } from '../components/FlagDisplay';
+
+import { FlagDisplay } from '../components';
 import { countries, type Country } from '../data';
+
+import './Game.css';
 
 const TOTAL_QUESTIONS = 10;
 
@@ -55,52 +59,75 @@ export function Game() {
     };
 
     if (questionList.length === 0) {
-        return <p>Loading game...</p>;
+        return <Text size="xl">Loading game...</Text>;
     }
 
     if (showResult) {
         return (
-            <div className="text-center mt-10">
-                <h2 className="text-3xl">Game Over!</h2>
-                <p className="text-xl">
+            <div
+                style={{
+                    display: 'flex',
+                    flexFlow: 'column',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100vh'
+                }}
+            >
+                <Title order={2}>Game Over!</Title>
+                <Text size="xl">
                     Your score: {score} / {questionList.length}
-                </p>
-                <button
-                    onClick={() => window.location.reload()}
-                    className="mt-4 px-4 py-2 bg-green-500 text-white rounded"
-                >
-                    Play Again
-                </button>
+                </Text>
+                <Button onClick={() => window.location.reload()}>Play Again</Button>
             </div>
         );
     }
 
     const current = questionList[qIndex];
     return (
-        <div className="flex flex-col items-center mt-10 gap-4">
-            <h1 className="text-2xl font-bold">Flag Quiz</h1>
-            <p>
-                Question {qIndex + 1} of {questionList.length}
-            </p>
-            <div className="w-64 h-3 bg-gray-200 rounded overflow-hidden">
-                <div
-                    className="h-full bg-blue-500"
-                    style={{ width: `${((TOTAL_QUESTIONS - qIndex) / TOTAL_QUESTIONS) * 100}%` }}
-                ></div>
+        <div>
+            <Title ta="center">Flag Quiz</Title>
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    margin: '10px'
+                }}
+            >
+                <Text>
+                    Question {qIndex + 1} of {questionList.length}
+                </Text>
             </div>
-            <FlagDisplay code={current.code} />
-            <div className="grid grid-cols-2 gap-4">
-                {options.map((opt) => (
-                    <button
-                        key={opt}
-                        onClick={() => handleAnswer(opt)}
-                        className="px-4 py-2 bg-blue-500 text-white rounded"
-                    >
-                        {opt}
-                    </button>
-                ))}
+            <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <FlagDisplay code={current.code} />
             </div>
-            <p>Score: {score}</p>
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    margin: '20px'
+                }}
+            >
+                <Grid className="options-list">
+                    {options.map((opt) => (
+                        <Grid.Col
+                            span={{ sm: 6, xs: 12 }}
+                            onClick={() => handleAnswer(opt)}
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                height: '80px',
+                                border: 'solid 1px white'
+                            }}
+                        >
+                            <Text size="xl" ta="center" fw={700}>
+                                {opt}
+                            </Text>
+                        </Grid.Col>
+                    ))}
+                </Grid>
+            </div>
+            <Text ta="center">Score: {score}</Text>
         </div>
     );
 }

@@ -1,0 +1,9 @@
+.options-list:hover {
+    cursor: pointer;
+}
+
+@media only screen and (min-width: 600px) {
+    .options-list {
+        width: 50%;
+    }
+}
