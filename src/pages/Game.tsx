@@ -1,37 +1,26 @@
-import { Button, Grid, Text, Title } from '@mantine/core';
-import { useCallback, useEffect, useState } from 'react';
+import { Button, Grid, Rating, Text, Title } from '@mantine/core';
+import { IconHeart } from '@tabler/icons-react';
+import { useEffect, useState } from 'react';
 
 import { FlagDisplay } from '../components';
 import { countries, type Country } from '../data';
+import { disableOption, enableOptions, shuffle } from '../utils';
 
 import './Game.css';
-
-const TOTAL_QUESTIONS = 10;
 
 export function Game() {
     const [score, setScore] = useState(0);
     const [qIndex, setQIndex] = useState(0);
+    const [lives, setLives] = useState(3);
+    const [rightAnswer, setRightAnswer] = useState<string | null>(null);
     const [questionList, setQuestionList] = useState<Country[]>([]);
     const [options, setOptions] = useState<string[]>([]);
     const [showResult, setShowResult] = useState(false);
 
-    const shuffle = useCallback((array: Country[]) => {
-        let index = array.length;
-        let random = 1;
-        let temp = array[0];
-        while (--index > 0) {
-            random = Math.floor(Math.random() * (index + 1));
-            temp = array[random];
-            array[random] = array[index];
-            array[index] = temp;
-        }
-        return array;
-    }, []);
-
     useEffect(() => {
-        const shuffled = shuffle(countries).slice(0, TOTAL_QUESTIONS);
+        const shuffled = shuffle(countries);
         setQuestionList(shuffled);
-    }, [shuffle]);
+    }, []);
 
     useEffect(() => {
         if (qIndex < questionList.length) {
@@ -43,19 +32,25 @@ export function Game() {
                 ]).map((c) => c.name)
             );
         }
-    }, [qIndex, questionList, shuffle]);
+    }, [qIndex, questionList]);
 
     const handleAnswer = (answer: string) => {
-        const current = questionList[qIndex];
-        if (answer === current.name) {
-            setScore((s) => s + 1);
-        }
-        if (qIndex + 1 < TOTAL_QUESTIONS) {
-            // questionList.length) {
-            setQIndex((i) => i + 1);
-        } else {
-            setShowResult(true);
-        }
+        requestAnimationFrame(() => {
+            const current = questionList[qIndex];
+            if (answer === current.name) {
+                setScore((s) => s + 1);
+                setQIndex((i) => i + 1);
+                enableOptions();
+            } else {
+                disableOption(answer);
+                const remaining = lives - 1;
+                setLives(remaining);
+                if (remaining === 0) {
+                    setRightAnswer(current.name);
+                    setShowResult(true);
+                }
+            }
+        });
     };
 
     if (questionList.length === 0) {
@@ -74,9 +69,8 @@ export function Game() {
                 }}
             >
                 <Title order={2}>Game Over!</Title>
-                <Text size="xl">
-                    Your score: {score} / {questionList.length}
-                </Text>
+                {rightAnswer ? <Text>Right answer: {rightAnswer}</Text> : null}
+                <Text size="xl">Your score: {score}</Text>
                 <Button onClick={() => window.location.reload()}>Play Again</Button>
             </div>
         );
@@ -86,16 +80,18 @@ export function Game() {
     return (
         <div>
             <Title ta="center">Flag Quiz</Title>
-            <div
-                style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    margin: '10px'
-                }}
-            >
-                <Text>
+            <div style={{ display: 'flex', justifyContent: 'space-evenly' }}>
+                <Text size="lg">
                     Question {qIndex + 1} of {questionList.length}
                 </Text>
+                <Rating
+                    value={lives}
+                    count={3}
+                    fullSymbol={<IconHeart color="red" fill="red" />}
+                    emptySymbol={<IconHeart color="red" />}
+                    color="red"
+                    readOnly
+                />
             </div>
             <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <FlagDisplay code={current.code} />
@@ -110,6 +106,8 @@ export function Game() {
                 <Grid className="options-list">
                     {options.map((opt) => (
                         <Grid.Col
+                            id={opt}
+                            key={opt}
                             span={{ sm: 6, xs: 12 }}
                             onClick={() => handleAnswer(opt)}
                             style={{
@@ -127,7 +125,9 @@ export function Game() {
                     ))}
                 </Grid>
             </div>
-            <Text ta="center">Score: {score}</Text>
+            <Text size="lg" ta="center">
+                Score: {score}
+            </Text>
         </div>
     );
 }
